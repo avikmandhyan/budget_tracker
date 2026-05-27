@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head><title>Altron Icon Generator</title></head>
+<body style="background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;font-family:sans-serif;color:#fff">
+<canvas id="c" width="1024" height="1024" style="border-radius:200px;width:300px;height:300px;margin-bottom:24px"></canvas>
+<button onclick="download()" style="padding:14px 32px;background:#3b82f6;color:#fff;border:none;border-radius:12px;font-size:16px;cursor:pointer;font-weight:600">Download icon.png</button>
+<p style="color:#64748b;font-size:13px;margin-top:12px">Save this as icon.png inside your budget-app folder</p>
+
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const W = 1024, cx = 512, cy = 512;
+
+// Background
+const bg = ctx.createLinearGradient(0,0,W,W);
+bg.addColorStop(0,'#0d1b3e');
+bg.addColorStop(1,'#060d1f');
+roundRect(ctx, 0, 0, W, W, 180, bg);
+
+// Grid lines
+ctx.globalAlpha = 0.06;
+ctx.strokeStyle = '#60a5fa';
+ctx.lineWidth = 1.5;
+[300,512,724].forEach(x => { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,W); ctx.stroke(); });
+[300,512,724].forEach(y => { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); });
+ctx.globalAlpha = 1;
+
+// Outer ring (full circle dim)
+ctx.beginPath();
+ctx.arc(cx, cy, 335, 0, Math.PI*2);
+ctx.strokeStyle = '#1e3a5f';
+ctx.lineWidth = 28;
+ctx.stroke();
+
+// Outer ring arc (gradient, ~270deg)
+const ringGrad = ctx.createLinearGradient(cx-335, cy, cx+335, cy);
+ringGrad.addColorStop(0,'#3b82f6');
+ringGrad.addColorStop(1,'#06b6d4');
+ctx.beginPath();
+ctx.arc(cx, cy, 335, -Math.PI/2, Math.PI*1.25);
+ctx.strokeStyle = ringGrad;
+ctx.lineWidth = 28;
+ctx.lineCap = 'round';
+ctx.stroke();
+ctx.lineCap = 'butt';
+
+// End dot of arc
+const endAngle = Math.PI*1.25;
+const dotX = cx + 335*Math.cos(endAngle);
+const dotY = cy + 335*Math.sin(endAngle);
+ctx.beginPath();
+ctx.arc(dotX, dotY, 16, 0, Math.PI*2);
+ctx.fillStyle = '#06b6d4';
+ctx.fill();
+
+// A shape legs
+const accentGrad = ctx.createLinearGradient(200,0,820,0);
+accentGrad.addColorStop(0,'#3b82f6');
+accentGrad.addColorStop(1,'#06b6d4');
+
+ctx.strokeStyle = accentGrad;
+ctx.lineWidth = 44;
+ctx.lineCap = 'round';
+
+// Left leg
+ctx.beginPath(); ctx.moveTo(310,760); ctx.lineTo(440,320); ctx.stroke();
+// Right leg
+ctx.beginPath(); ctx.moveTo(714,760); ctx.lineTo(584,320); ctx.stroke();
+
+// Crossbar
+const cbGrad = ctx.createLinearGradient(350,0,680,0);
+cbGrad.addColorStop(0,'#3b82f6');
+cbGrad.addColorStop(1,'#06b6d4');
+roundRect(ctx, 378, 565, 268, 36, 18, cbGrad);
+
+// Bar chart (3 bars)
+const barGrad = ctx.createLinearGradient(0,700,0,300);
+barGrad.addColorStop(0,'#1d4ed8');
+barGrad.addColorStop(1,'#38bdf8');
+
+// bar 1
+ctx.globalAlpha = 0.9;
+roundRect(ctx, 418, 628, 52, 100, 8, barGrad);
+// bar 2
+ctx.globalAlpha = 1;
+roundRect(ctx, 486, 594, 52, 134, 8, barGrad);
+// bar 3
+ctx.globalAlpha = 0.75;
+roundRect(ctx, 554, 652, 52, 76, 8, barGrad);
+ctx.globalAlpha = 1;
+
+// Apex dot
+ctx.beginPath();
+ctx.arc(512, 300, 28, 0, Math.PI*2);
+ctx.fillStyle = '#38bdf8';
+ctx.fill();
+
+// Border
+ctx.beginPath();
+roundRectStroke(ctx, 0, 0, W, W, 180, '#1e3a5f', 3);
+
+function roundRect(ctx, x, y, w, h, r, fill) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+}
+
+function roundRectStroke(ctx, x, y, w, h, r, color, lw) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw;
+  ctx.stroke();
+}
+
+function download() {
+  const a = document.createElement('a');
+  a.download = 'icon.png';
+  a.href = c.toDataURL('image/png');
+  a.click();
+}
+</script>
+</body>
+</html>
